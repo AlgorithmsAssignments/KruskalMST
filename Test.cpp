@@ -68,15 +68,6 @@ void test()
 
     int **a1=getKruskalMST(g1,5,e1);
 
-//    for(int i=0;i<5;i++)
-//    {
-//        for(int j=0;j<5;j++)
-//        {
-//            if(a1[i][j]!=-1)
-//                cout<<i<<"->"<<j<<" ="<<a1[i][j]<<endl;
-//        }
-//    }
-
     int** g2 = _initGraph(5);
     g2[3][0]=13;
     g2[0][3]=13;
