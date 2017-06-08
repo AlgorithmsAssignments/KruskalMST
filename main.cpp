@@ -20,11 +20,11 @@ void initVisitedArray(bool* visited, int size)
 bool hasCycle(int** graph, int size, Edge* edge)
 {
 	//graph[fromNode][toNode] = cost
-	int currentNode = -1;
+	//int currentNode = -1;
 	int cost = -1;
 	bool visitedNodes[size];
 	initVisitedArray(visitedNodes, size);
-  graph[edge->source][edge->destination] = edge->weight;
+  	graph[edge->source][edge->destination] = edge->weight;
 	for(int i = 0; i < size; ++i)
 	{
 		visitedNodes[i] = true;
@@ -33,15 +33,18 @@ bool hasCycle(int** graph, int size, Edge* edge)
 			cost = graph[i][k];
 			if(cost != -1)
 			{
-        cout<<"Checking for cycle from "<<edge->source<<" to: "<<edge->destination<<endl;
+        		cout<<"Checking for cycle from "<<edge->source<<" to: "<<edge->destination<<endl;
 				if(nodeHasBeenVisited(visitedNodes, k))
 				{
-          graph[edge->source][edge->destination] = -1;
+          			graph[edge->source][edge->destination] = -1;
+
+					cout<<"It has cycle"<<endl;
 					return true;
 				}
 			}
 		}
 	}
+	cout<<"Returning"<<endl;
     return false;
 }
 
@@ -72,7 +75,7 @@ int** getKruskalMST(int** graph, int size, vector<Edge*> edges)
       {
         break;
       }
-      if(hasCycle(kruskalGraph, size, edges[i++]))
+      if(!hasCycle(kruskalGraph, size, edges[i++]))
       {
         ++addedEdges;
       }
