@@ -17,35 +17,51 @@ void initVisitedArray(bool* visited, int size)
 	}
 }
 
-bool hasCycle(int** graph, int size, Edge* edge)
+bool checkCycleThroughNode(int** graph, int size, bool* visited, int father, int node)
 {
-	//graph[fromNode][toNode] = cost
-	//int currentNode = -1;
-	int cost = -1;
-	bool visitedNodes[size];
-	initVisitedArray(visitedNodes, size);
-  	graph[edge->source][edge->destination] = edge->weight;
-	for(int i = 0; i < size; ++i)
+	bool value = false;
+	if (node < size)
 	{
-		visitedNodes[i] = true;
-		for(int k = 0; k < size; ++k)
-		{
-			cost = graph[i][k];
-			if(cost != -1)
-			{
-        		cout<<"Checking for cycle from "<<edge->source<<" to: "<<edge->destination<<endl;
-				if(nodeHasBeenVisited(visitedNodes, k))
-				{
-          			graph[edge->source][edge->destination] = -1;
+		visited[node] = true;
 
-					cout<<"It has cycle"<<endl;
-					return true;
+		cout<<"Checking father: "<<father<<" and son: "<<node<<endl;
+		for (int i = 0; i < size; ++i)
+		{
+			if (i != node && i != father)
+			{
+				//cout<<"Checking father: "<<father<<" with: "<<i<<endl;
+				if (graph[node][i] != -1)
+				{
+					if (visited[i])
+					{
+						return true;
+					}else{
+						value |= checkCycleThroughNode(graph, size, visited, node, i);
+					}
 				}
 			}
 		}
 	}
-	cout<<"Returning"<<endl;
-    return false;
+	return value;
+}
+
+bool hasCycle(int** graph, int size, Edge* edge)
+{
+	bool visitedNodes[size];
+	initVisitedArray(visitedNodes, size);
+  graph[edge->source][edge->destination] = edge->weight;
+  graph[edge->destination][edge->source] = edge->weight;
+
+	bool hasCycleWithNode = checkCycleThroughNode(graph, size, visitedNodes, 0, 0);
+
+	if(hasCycleWithNode)
+	{
+		cout<<"Had cycle"<<endl;
+		graph[edge->source][edge->destination] = -1;
+		graph[edge->destination][edge->source] = -1;
+	}
+
+	return hasCycleWithNode;
 }
 
 int** initGraph(int size)
@@ -69,16 +85,12 @@ int** getKruskalMST(int** graph, int size, vector<Edge*> edges)
 
     unsigned int i = 0;
     cout<<"Running"<<endl;
-    while(addedEdges < size - 1)
+		while(i < edges.size())
     {
-      if(i >= edges.size())
+			if(!hasCycle(kruskalGraph, size, edges[i++]))
       {
-        break;
       }
-      if(!hasCycle(kruskalGraph, size, edges[i++]))
-      {
-        ++addedEdges;
-      }
+			//++addedEdges;
     }
     return kruskalGraph;
 }
